@@ -20,7 +20,7 @@
 #define CCB_CONFIG_STATE_HH
 
 #include <list>
-#include <map>
+#include <unordered_map>
 #include <string>
 #include "com/centreon/broker/config/endpoint.hh"
 #include "com/centreon/broker/config/logger.hh"
@@ -38,10 +38,30 @@ namespace config {
  *  along with object definitions.
  */
 class state {
+ private:
+  uint32_t _broker_id;
+  uint16_t _rpc_port;
+  std::string _broker_name;
+  std::string _cache_directory;
+  std::string _command_file;
+  std::string _command_protocol;
+  std::list<endpoint> _endpoints;
+  int32_t _event_queue_max_size;
+  bool _flush_logs;
+  bool _log_thread_id;
+  logging::timestamp_type _log_timestamp;
+  bool _log_human_readable_timestamp;
+  std::list<logger> _loggers;
+  std::string _module_dir;
+  std::list<std::string> _module_list;
+  std::unordered_map<std::string, std::string> _params;
+  uint32_t _poller_id;
+  std::string _poller_name;
+
  public:
   state();
+  ~state() = default;
   state(state const& other);
-  ~state();
   state& operator=(state const& other);
   void broker_id(int id) noexcept;
   int broker_id() const noexcept;
@@ -55,7 +75,6 @@ class state {
   std::string const& command_file() const noexcept;
   void command_protocol(std::string const& prot);
   std::string const& command_protocol() const noexcept;
-  void clear();
   std::list<endpoint>& endpoints() noexcept;
   std::list<endpoint> const& endpoints() const noexcept;
   void event_queue_max_size(int val) noexcept;
@@ -74,34 +93,12 @@ class state {
   void module_directory(std::string const& dir);
   std::list<std::string>& module_list() noexcept;
   std::list<std::string> const& module_list() const noexcept;
-  std::map<std::string, std::string>& params() noexcept;
-  std::map<std::string, std::string> const& params() const noexcept;
+  std::unordered_map<std::string, std::string>& params() noexcept;
+  std::unordered_map<std::string, std::string> const& params() const noexcept;
   void poller_id(int id) noexcept;
   int poller_id() const noexcept;
   void poller_name(std::string const& name);
   std::string const& poller_name() const noexcept;
-
- private:
-  void _internal_copy(state const& other);
-
-  int _broker_id;
-  uint16_t _rpc_port;
-  std::string _broker_name;
-  std::string _cache_directory;
-  std::string _command_file;
-  std::string _command_protocol;
-  std::list<endpoint> _endpoints;
-  int _event_queue_max_size;
-  bool _flush_logs;
-  bool _log_thread_id;
-  logging::timestamp_type _log_timestamp;
-  bool _log_human_readable_timestamp;
-  std::list<logger> _loggers;
-  std::string _module_dir;
-  std::list<std::string> _module_list;
-  std::map<std::string, std::string> _params;
-  int _poller_id;
-  std::string _poller_name;
 };
 }  // namespace config
 

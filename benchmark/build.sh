@@ -1,3 +1,4 @@
+#!/bin/bash
 
 RESET='\033[0m'
 RED='\033[0;31m'
@@ -46,7 +47,7 @@ fi
 
 cd build
 conan remote add centreon https://api.bintray.com/conan/centreon/centreon
-conan install --remote centreon ../..
+conan install --build missing ../..
 
 cmake -GNinja -DWITH_SIMU=On -DWITH_RW_DIR=$root_dir/lib -DWITH_VAR_DIR=$root_dir/log ../..
 
