@@ -37,6 +37,10 @@ CCB_BEGIN()
 class instance_broadcast : public io::data {
  public:
   instance_broadcast();
+  instance_broadcast(uint32_t broker_id,
+                     uint32_t poller_id,
+                     std::string const& poller_name,
+                     bool enabled);
   instance_broadcast(instance_broadcast const& other);
   ~instance_broadcast();
   instance_broadcast& operator=(instance_broadcast const& other);
@@ -61,9 +65,6 @@ class instance_broadcast : public io::data {
   static io::event_info::event_operations const operations;
 
   static void load();
-
- private:
-  void _internal_copy(instance_broadcast const& other);
 };
 
 CCB_END()

@@ -35,7 +35,7 @@ namespace applier {
  */
 class state {
  public:
-  ~state();
+  ~state() = default;
   void apply(config::state const& s, bool run_mux = true);
   std::string const& cache_dir() const noexcept;
   static state& instance();

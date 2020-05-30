@@ -35,15 +35,28 @@ instance_broadcast::instance_broadcast()
       enabled(true),
       poller_id(0) {}
 
+instance_broadcast::instance_broadcast(uint32_t broker_id,
+                                       uint32_t poller_id,
+                                       std::string const& poller_name,
+                                       bool enabled)
+    : io::data(instance_broadcast::static_type()),
+      broker_id(broker_id),
+      enabled(enabled),
+      poller_id(poller_id),
+      poller_name(poller_name) {}
+
 /**
  *  Copy constructor.
  *
  *  @param[in] other  Object to copy.
  */
 instance_broadcast::instance_broadcast(instance_broadcast const& other)
-    : io::data(other) {
-  _internal_copy(other);
-}
+    : io::data(other),
+      broker_id{other.broker_id},
+      broker_name{other.broker_name},
+      enabled{other.enabled},
+      poller_id{other.poller_id},
+      poller_name{other.poller_name} {}
 
 /**
  *  Destructor.
@@ -61,7 +74,11 @@ instance_broadcast& instance_broadcast::operator=(
     instance_broadcast const& other) {
   if (this != &other) {
     io::data::operator=(other);
-    _internal_copy(other);
+    broker_id = other.broker_id;
+    broker_name = other.broker_name;
+    enabled = other.enabled;
+    poller_id = other.poller_id;
+    poller_name = other.poller_name;
   }
   return *this;
 }
@@ -75,25 +92,6 @@ void instance_broadcast::load() {
       io::events::internal, io::events::de_instance_broadcast,
       io::event_info("instance_broadcast", &instance_broadcast::operations,
                      instance_broadcast::entries));
-}
-
-/**************************************
- *                                     *
- *           Private Methods           *
- *                                     *
- **************************************/
-
-/**
- *  Copy internal data members.
- *
- *  @param[in] other  Object to copy.
- */
-void instance_broadcast::_internal_copy(instance_broadcast const& other) {
-  broker_id = other.broker_id;
-  broker_name = other.broker_name;
-  enabled = other.enabled;
-  poller_id = other.poller_id;
-  poller_name = other.poller_name;
 }
 
 /**************************************
