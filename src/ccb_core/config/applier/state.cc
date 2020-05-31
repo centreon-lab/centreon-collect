@@ -1,5 +1,5 @@
 /*
-** Copyright 2011-2013,2015-2016 Centreon
+** Copyright 2011-2013,2015-2016,2019-2020 Centreon
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -65,9 +65,8 @@ void state::apply(com::centreon::broker::config::state const& s, bool run_mux) {
       throw exceptions::msg()
             << "state applier: broker_name is not "
             << " valid: allowed characters are " << allowed_chars;
-  for (std::list<config::endpoint>::const_iterator it(s.endpoints().begin()),
-       end(s.endpoints().end());
-       it != end; ++it) {
+  for (auto it = s.endpoints().begin(), end = s.endpoints().end(); it != end;
+       ++it) {
     if (it->name.empty())
       throw exceptions::msg() << "state applier: endpoint name is not set: "
                               << "please fill name of all endpoints";
@@ -107,7 +106,7 @@ void state::apply(com::centreon::broker::config::state const& s, bool run_mux) {
   // Enable or not timestamp logging.
   com::centreon::broker::logging::file::with_timestamp(s.log_timestamp());
 
-  // Enable or not human readable timstamp logging.
+  // Enable or not human readable timestamp logging.
   com::centreon::broker::logging::file::with_human_redable_timestamp(
       s.log_human_readable_timestamp());
 
@@ -136,17 +135,6 @@ void state::apply(com::centreon::broker::config::state const& s, bool run_mux) {
       s.event_queue_max_size());
 
   com::centreon::broker::config::state st = s;
-
-//  // Create command file input.
-//  if (!s.command_file().empty()) {
-//    config::endpoint ept;
-//    ept.name = "(external commands)";
-//    ept.type = "extcmd";
-//    ept.params.insert({"extcmd", s.command_file()});
-//    ept.params.insert({"command_protocol", s.command_protocol()});
-//    ept.read_filters.insert("all");
-//    st.endpoints().push_back(ept);
-//  }
 
   // Apply input and output configuration.
   endpoint::instance().apply(st.endpoints());

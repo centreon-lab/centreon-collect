@@ -36,6 +36,7 @@
 #include "com/centreon/broker/processing/acceptor.hh"
 #include "com/centreon/broker/processing/failover.hh"
 #include "com/centreon/broker/processing/thread.hh"
+#include "com/centreon/broker/log_v2.hh"
 
 using namespace com::centreon::broker;
 using namespace com::centreon::broker::config::applier;
@@ -53,6 +54,8 @@ static config::applier::endpoint* gl_endpoint = nullptr;
  *  Comparison classes.
  */
 class failover_match_name {
+  std::string _failover;
+
  public:
   failover_match_name(std::string const& fo) : _failover(fo) {}
   failover_match_name(failover_match_name const& fmn)
@@ -65,11 +68,10 @@ class failover_match_name {
   bool operator()(config::endpoint const& endp) const {
     return _failover == endp.name;
   }
-
- private:
-  std::string _failover;
 };
+
 class name_match_failover {
+  std::string _name;
  public:
   name_match_failover(std::string const& name) : _name(name) {}
   name_match_failover(name_match_failover const& nmf) : _name(nmf._name) {}
@@ -82,9 +84,6 @@ class name_match_failover {
     return (std::find(endp.failovers.begin(), endp.failovers.end(), _name) !=
             endp.failovers.end());
   }
-
- private:
-  std::string _name;
 };
 
 /**************************************
@@ -130,6 +129,9 @@ void endpoint::apply(std::list<config::endpoint> const& endpoints) {
     _diff_endpoints(_endpoints, tmp_endpoints, endp_to_create);
   }
 
+  for (auto const& tc : endp_to_create)
+    log_v2::core()->info("endpoints to create: {}", tc.name);
+
   // Update existing endpoints.
   for (iterator it(_endpoints.begin()), end(_endpoints.end()); it != end; ++it)
     it->second->update();
@@ -144,8 +146,8 @@ void endpoint::apply(std::list<config::endpoint> const& endpoints) {
        it != end; ++it) {
     // Check that output is not a failover.
     if (it->name.empty() ||
-        (std::find_if(endp_to_create.begin(), endp_to_create.end(),
-                      name_match_failover(it->name)) == endp_to_create.end())) {
+        std::find_if(endp_to_create.begin(), endp_to_create.end(),
+                      name_match_failover(it->name)) == endp_to_create.end()) {
       // Create subscriber and endpoint.
       std::shared_ptr<multiplexing::subscriber> s(_create_subscriber(*it));
       bool is_acceptor;
