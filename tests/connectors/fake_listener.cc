@@ -146,7 +146,7 @@ bool operator==(std::list<fake_listener::callback_info> const& left,
       if ((it1->callback != it2->callback) ||
           ((it1->callback == fake_listener::cb_execute) &&
            ((it1->cmd_id != it2->cmd_id) ||
-            (fabs(it1->timeout.to_seconds() - it2->timeout.to_seconds()) >=
+            (std::abs(it1->timeout.to_seconds() - it2->timeout.to_seconds()) >=
              1.0) ||
             (it1->host != it2->host) || (it1->port != it2->port) ||
             (it1->user != it2->user) || (it1->password != it2->password) ||

@@ -62,7 +62,6 @@ add_library(ccb_core
   ${CMAKE_SOURCE_DIR}/src/ccb_core/instance_broadcast.cc
   ${CMAKE_SOURCE_DIR}/src/ccb_core/io/data.cc
   ${CMAKE_SOURCE_DIR}/src/ccb_core/io/endpoint.cc
-  ${CMAKE_SOURCE_DIR}/src/ccb_core/io/event_info.cc
   ${CMAKE_SOURCE_DIR}/src/ccb_core/io/events.cc
   ${CMAKE_SOURCE_DIR}/src/ccb_core/io/factory.cc
   ${CMAKE_SOURCE_DIR}/src/ccb_core/io/protocols.cc

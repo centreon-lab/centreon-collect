@@ -1,5 +1,5 @@
 /*
-** Copyright 2013-2017 Centreon
+** Copyright 2013-2017,2020 Centreon
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 #define CCB_IO_EVENTS_HH
 
 #include <unordered_map>
+
 #include "com/centreon/broker/io/event_info.hh"
 
 CCB_BEGIN()
@@ -77,8 +78,11 @@ class events {
 
   // Events.
   uint32_t register_event(unsigned short category_id,
-                              unsigned short event_id,
-                              event_info const& info);
+                          unsigned short event_id,
+                          std::string const& name = std::string(),
+                          event_info::event_operations const* ops = nullptr,
+                          mapping::entry const* entries = nullptr,
+                          std::string const& table_v2 = std::string());
   void unregister_event(uint32_t type_id);
 
   // ID manipulations.
@@ -89,7 +93,7 @@ class events {
     return (static_cast<unsigned short>(type));
   }
   static uint32_t make_type(unsigned short category_id,
-                                unsigned short element_id) throw() {
+                            unsigned short element_id) throw() {
     return ((static_cast<uint32_t>(category_id) << 16) | element_id);
   }
 

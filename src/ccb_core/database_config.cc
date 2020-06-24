@@ -56,7 +56,7 @@ database_config::database_config(std::string const& type,
                                  std::string const& user,
                                  std::string const& password,
                                  std::string const& name,
-                                 uint32_t queries_per_transaction,
+                                 int32_t queries_per_transaction,
                                  bool check_replication,
                                  int connections_count)
     : _type(type),
@@ -263,7 +263,7 @@ std::string const& database_config::get_name() const {
  *
  *  @return Number of queries per transaction.
  */
-uint32_t database_config::get_queries_per_transaction() const {
+int32_t database_config::get_queries_per_transaction() const {
   return _queries_per_transaction;
 }
 

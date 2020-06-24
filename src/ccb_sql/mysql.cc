@@ -33,7 +33,6 @@ std::once_flag init_flag;
 mysql::mysql(database_config const& db_cfg)
     : _db_cfg(db_cfg),
       _pending_queries(0),
-      _version(mysql::v2),
       _current_connection(0) {
   mysql_manager& mgr(mysql_manager::instance());
   _connection = mgr.get_connections(db_cfg);
@@ -301,15 +300,6 @@ mysql_stmt mysql::prepare_query(std::string const& query,
   prepare_statement(retval);
 
   return retval;
-}
-
-/**
- *  Returns the version of the database schema.
- *
- *  @return  A version as mysql::version.
- */
-mysql::version mysql::schema_version() const {
-  return _version;
 }
 
 /**

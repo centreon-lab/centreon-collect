@@ -91,25 +91,30 @@ void events::unregister_category(unsigned short category_id) {
 }
 
 /**
- *  Register an event.
+ * @brief Register an event.
  *
- *  @param[in] category_id  Category ID. Category must have been
- *                          registered through register_category().
- *  @param[in] event_id     Event ID whithin the category.
- *  @param[in] info         Information about the event.
+ * @param category_id Category ID. Category must have been registered through register_category().
+ * @param event_id Event ID within the category.
+ * @param name Name of the event.
+ * @param ops Event operations
+ * @param entries Entries of this event
+ * @param table_v2 The table in the database v2 (default one).
  *
- *  @return Event type ID.
+ * @return The type of this new event.
  */
 uint32_t events::register_event(unsigned short category_id,
-                                    unsigned short event_id,
-                                    event_info const& info) {
+                                unsigned short event_id,
+                                std::string const& name,
+                                event_info::event_operations const* ops,
+                                mapping::entry const* entries,
+                                std::string const& table_v2) {
   categories_container::iterator it(_elements.find(category_id));
   if (it == _elements.end())
-    throw(exceptions::msg()
-          << "core: could not register event '" << info.get_name()
-          << "': category " << category_id << " was not registered");
+    throw exceptions::msg()
+          << "core: could not register event '" << name
+          << "': category " << category_id << " was not registered";
   int type(make_type(category_id, event_id));
-  it->second.events[type] = info;
+  it->second.events.emplace(type, event_info(name, ops, entries, table_v2));
   return type;
 }
 
@@ -226,7 +231,7 @@ events::events_container events::get_matching_events(
          it != end; ++it) {
       if (it->second.get_name() == event_name) {
         events::events_container res;
-        res[it->first] = it->second;
+        res.emplace(it->first, it->second);
         return res;
       }
     }

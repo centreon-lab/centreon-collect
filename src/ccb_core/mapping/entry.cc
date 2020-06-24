@@ -29,63 +29,6 @@ using namespace com::centreon::broker::mapping;
  **************************************/
 
 /**
- *  Default constructor.
- */
-entry::entry()
-    : _attribute(always_valid),
-      _name(nullptr),
-      _name_v2(nullptr),
-      _ptr(nullptr),
-      _serialize(false),
-      _type(source::UNKNOWN) {}
-
-/**
- *  Copy constructor.
- *
- *  @param[in] other  Object to copy.
- */
-entry::entry(entry const& other)
-    : _name(other._name),
-      _name_v2(other._name_v2),
-      _ptr(other._ptr),
-      _serialize(other._serialize),
-      _source(other._source),
-      _type(other._type) {}
-
-/**
- *  Destructor.
- */
-entry::~entry() {}
-
-/**
- *  Assignment operator.
- *
- *  @param[in] other  Object to copy.
- *
- *  @return This object.
- */
-entry& entry::operator=(entry const& other) {
-  if (this != &other) {
-    _name = other._name;
-    _name_v2 = other._name_v2;
-    _ptr = other._ptr;
-    _serialize = other._serialize;
-    _source = other._source;
-    _type = other._type;
-  }
-  return (*this);
-}
-
-/**
- *  Get entry attribute.
- *
- *  @return Entry attribute.
- */
-uint32_t entry::get_attribute() const {
-  return (_attribute);
-}
-
-/**
  *  Get the boolean value.
  *
  *  @param[in] d Object to work on.
@@ -116,33 +59,6 @@ double entry::get_double(io::data const& d) const {
  */
 int entry::get_int(io::data const& d) const {
   return (_ptr->get_int(d));
-}
-
-/**
- *  Get the name of this entry.
- *
- *  @return The name of this entry.
- */
-char const* entry::get_name() const {
-  return (_name);
-}
-
-/**
- *  Get the name of this entry in version 2.x.
- *
- *  @return The name of this entry in version 2.x.
- */
-char const* entry::get_name_v2() const {
-  return _name_v2;
-}
-
-/**
- *  Check if entry is to be serialized.
- *
- *  @return True if entry is to be serialized.
- */
-bool entry::get_serialize() const {
-  return (_serialize);
 }
 
 /**
@@ -179,15 +95,6 @@ timestamp const& entry::get_time(io::data const& d) const {
 }
 
 /**
- *  Get entry type.
- *
- *  @return Entry type.
- */
-uint32_t entry::get_type() const {
-  return _type;
-}
-
-/**
  *  Get the uint32_teger value.
  *
  *  @param[in] d Object to work on.
@@ -207,15 +114,6 @@ uint32_t entry::get_uint(io::data const& d) const {
  */
 unsigned short entry::get_ushort(io::data const& d) const {
   return _ptr->get_ushort(d);
-}
-
-/**
- *  Get if this entry is a null entry.
- *
- *  @return  True if this entry is a null entry (last entry).
- */
-bool entry::is_null() const {
-  return _type == source::UNKNOWN;
 }
 
 /**

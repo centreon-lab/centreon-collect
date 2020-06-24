@@ -1,5 +1,5 @@
 /*
-** Copyright 2015 Centreon
+** Copyright 2015,2019-2020 Centreon
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@
 */
 
 #include "com/centreon/broker/query_preparator.hh"
+
 #include <sstream>
+
 #include "com/centreon/broker/exceptions/msg.hh"
 #include "com/centreon/broker/io/events.hh"
 #include "com/centreon/broker/logging/logging.hh"
@@ -133,7 +135,7 @@ mysql_stmt query_preparator::prepare_insert(mysql& ms, bool ignore) {
   } catch (std::exception const& e) {
     throw(exceptions::msg()
           << "could not prepare insertion query for event '" << info->get_name()
-          << "' in table '" << info->get_table() << "': " << e.what());
+          << "' in table '" << info->get_table_v2() << "': " << e.what());
   }
   return retval;
 }
@@ -148,24 +150,15 @@ mysql_stmt query_preparator::prepare_insert_or_update(mysql& ms) {
           << "could not prepare insertion query for event of type " << _event_id
           << ": event is not registered");
 
-  // Database schema version.
-  bool schema_v2(ms.schema_version() == mysql::v2);
-
   // Build query string.
   std::string insert("INSERT INTO ");
   std::string update(" ON DUPLICATE KEY UPDATE ");
-  if (schema_v2)
-    insert.append(info->get_table_v2());
-  else
-    insert.append(info->get_table());
+  insert.append(info->get_table_v2());
   insert.append(" (");
   mapping::entry const* entries(info->get_mapping());
   for (int i(0); !entries[i].is_null(); ++i) {
     char const* entry_name;
-    if (schema_v2)
-      entry_name = entries[i].get_name_v2();
-    else
-      entry_name = entries[i].get_name();
+    entry_name = entries[i].get_name_v2();
     if (!entry_name || !entry_name[0] ||
         (_excluded.find(entry_name) != _excluded.end()))
       continue;
@@ -179,10 +172,7 @@ mysql_stmt query_preparator::prepare_insert_or_update(mysql& ms) {
   int update_size(0);
   for (int i(0); !entries[i].is_null(); ++i) {
     char const* entry_name;
-    if (schema_v2)
-      entry_name = entries[i].get_name_v2();
-    else
-      entry_name = entries[i].get_name();
+    entry_name = entries[i].get_name_v2();
     if (!entry_name || !entry_name[0] ||
         (_excluded.find(entry_name) != _excluded.end()))
       continue;
@@ -221,7 +211,7 @@ mysql_stmt query_preparator::prepare_insert_or_update(mysql& ms) {
   } catch (std::exception const& e) {
     throw(exceptions::msg()
           << "could not prepare insert or update query for event '"
-          << info->get_name() << "' in table '" << info->get_table()
+          << info->get_name() << "' in table '" << info->get_table_v2()
           << "': " << e.what());
   }
   return retval;
@@ -242,16 +232,10 @@ mysql_stmt query_preparator::prepare_update(mysql& ms) {
           << "could not prepare update query for event of type " << _event_id
           << ": event is not registered");
 
-  // Database schema version.
-  bool schema_v2(ms.schema_version() == mysql::v2);
-
   // Build query string.
   std::string query("UPDATE ");
   std::string where(" WHERE ");
-  if (schema_v2)
-    query.append(info->get_table_v2());
-  else
-    query.append(info->get_table());
+  query.append(info->get_table_v2());
   query.append(" SET ");
   mapping::entry const* entries(info->get_mapping());
   std::string key;
@@ -259,10 +243,7 @@ mysql_stmt query_preparator::prepare_update(mysql& ms) {
   int where_size(0);
   for (int i(0); !entries[i].is_null(); ++i) {
     char const* entry_name;
-    if (schema_v2)
-      entry_name = entries[i].get_name_v2();
-    else
-      entry_name = entries[i].get_name();
+    entry_name = entries[i].get_name_v2();
     if (!entry_name || !entry_name[0] ||
         (_excluded.find(entry_name) != _excluded.end()))
       continue;
@@ -301,7 +282,7 @@ mysql_stmt query_preparator::prepare_update(mysql& ms) {
   } catch (std::exception const& e) {
     throw(exceptions::msg()
           << "could not prepare update query for event '" << info->get_name()
-          << "' on table '" << info->get_table() << "': " << e.what());
+          << "' on table '" << info->get_table_v2() << "': " << e.what());
   }
   return retval;
 }
@@ -346,7 +327,7 @@ mysql_stmt query_preparator::prepare_delete(mysql& ms) {
     // FIXME DBR
     throw(exceptions::msg()
           << "could not prepare deletion query for event '" << info->get_name()
-          << "' on table '" << info->get_table() << "': " << e.what());
+          << "' on table '" << info->get_table_v2() << "': " << e.what());
   }
   return retval;
 }

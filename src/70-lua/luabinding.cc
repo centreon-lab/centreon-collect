@@ -315,7 +315,7 @@ int luabinding::write(std::shared_ptr<io::data> const& data) noexcept {
  *  @param d The event to convert.
  */
 void luabinding::_parse_entries(io::data const& d) {
-  io::event_info const* info(io::events::instance().get_event_info(d.type()));
+  io::event_info const* info = io::events::instance().get_event_info(d.type());
   if (info) {
     for (mapping::entry const* current_entry(info->get_mapping());
          !current_entry->is_null();
